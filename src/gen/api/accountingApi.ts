@@ -3102,6 +3102,76 @@ export class AccountingApi {
             });
         });
     }
+	/**
+     * 
+     * @summary Updates multiple payments for invoices or credit notes
+     * @param xeroTenantId Xero identifier for Tenant
+     * @param payments Payments array with Payment object in body of request
+     * @param summarizeErrors If false return 200 OK and mix of successfully created objects and any with validation errors
+     */     
+    public async updatePayments (xeroTenantId: string, payments: Payments, summarizeErrors?: boolean, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: Payments;  }> {
+        const localVarPath = this.basePath + '/Payments';
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
+
+        // verify required parameter 'xeroTenantId' is not null or undefined
+        if (xeroTenantId === null || xeroTenantId === undefined) {
+            throw new Error('Required parameter xeroTenantId was null or undefined when calling updatePayments.');
+        }
+
+        // verify required parameter 'payments' is not null or undefined
+        if (payments === null || payments === undefined) {
+            throw new Error('Required parameter payments was null or undefined when calling updatePayments.');
+        }
+
+        if (summarizeErrors !== undefined) {
+            localVarQueryParameters['summarizeErrors'] = ObjectSerializer.serialize(summarizeErrors, "boolean");
+        }
+
+        localVarHeaderParams['xero-tenant-id'] = ObjectSerializer.serialize(xeroTenantId, "string");
+
+        (<any>Object).assign(localVarHeaderParams, options.headers);
+        let localVarUseFormData = false;
+
+        let localVarRequestOptions: localVarRequest.Options = {
+            method: 'POST',
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
+            uri: localVarPath,
+            useQuerystring: this._useQuerystring,
+            json: true,
+            body: ObjectSerializer.serialize(payments, "Payments")
+        };
+
+        let authenticationPromise = Promise.resolve();
+        authenticationPromise = authenticationPromise.then(() => this.authentications.OAuth2.applyToRequest(localVarRequestOptions));
+
+        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
+        return authenticationPromise.then(() => {
+            if (Object.keys(localVarFormParams).length) {
+                if (localVarUseFormData) {
+                    (<any>localVarRequestOptions).formData = localVarFormParams;
+                } else {
+                    localVarRequestOptions.form = localVarFormParams;
+                }
+            }
+            return new Promise<{ response: http.IncomingMessage; body: Payments;  }>((resolve, reject) => {
+                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        body = ObjectSerializer.deserialize(body, "Payments");
+                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                            resolve({ response: response, body: body });
+                        } else {
+                            reject({ response: response, body: body });
+                        }
+                    }
+                });
+            });
+        });
+    }
     /**
      * 
      * @summary Allows you to create an Allocation for prepayments
